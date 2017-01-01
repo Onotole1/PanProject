@@ -13,51 +13,57 @@ import com.spitchenko.panproject.MVC.BurnerController;
  *
  * @author anatoliy
  */
-public class GasBurnerController implements BurnerController, SeekBar.OnSeekBarChangeListener {
+class GasBurnerController implements BurnerController, SeekBar.OnSeekBarChangeListener {
     private GasBurnerModel burnerModel;
 	private boolean isPan;
 	private PanController panController;
-	private PanSoup panSoup;
+	private PanConcrete panConcrete;
 	private PanSoupView panSoupView;
 	private Thread thread;
+	private Button capButton;
+	private Context context;
 
-    public GasBurnerController(final Context context, Button buttonPan, Button buttonCap) {
-        this.burnerModel = new GasBurnerModel();
-	    panSoup = new PanSoup();
-	    this.panController = new PanController(buttonCap, panSoup);
+    GasBurnerController(Context context, Button buttonPan, Button buttonCap) {
+	    burnerModel = new GasBurnerModel();
 	    GasBurnerView gasBurnerView = new GasBurnerView();
 	    burnerModel.registerObserver(gasBurnerView);
-
-	    panSoupView = new PanSoupView(context);
-	    panController = new PanController(buttonCap, panSoup);
-	    thread = new Thread(panSoup);
-
-		isPan = true;
-	    View.OnClickListener oclBtnOk = new View.OnClickListener() {
-		    @Override
-		    public void onClick(View v) {
-
-			    if (!isPan) {
-				    burnerModel.registerObserver(panController);
-				    panSoup.registerObserver(panSoupView);
-				    thread.start();
-				    isPan = true;
-			    }
-			    else {
-				    panSoup.removeObserver(panSoupView);
-					burnerModel.removeObserver(panController);
-				    //thread.interrupt();
-				    isPan = false;
-			    }
-		    }
-	    };
+		this.capButton = buttonCap;
+		isPan = false;
+		this.context = context;
+	    View.OnClickListener oclBtnOk = new ViewOnClickListener();
 
 	    buttonPan.setOnClickListener(oclBtnOk);
-	    //mContext = context;
-	    //mSeekBar = seekBar;
+
     }
 
 
+	private class ViewOnClickListener implements View.OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+
+			if (!isPan) {
+
+				panConcrete = new PanConcrete();
+				panController = new PanController(capButton, panConcrete);
+				panSoupView = new PanSoupView(context);
+				panController = new PanController(capButton, panConcrete);
+				thread = new Thread(panConcrete);
+				burnerModel.registerObserver(panController);
+				panConcrete.registerObserver(panSoupView);
+				thread.start();
+				burnerModel.notifyObservers();
+				isPan = true;
+			}
+			else {
+				panConcrete.setRunThread(false);
+				panConcrete.removeObserver(panSoupView);
+				thread.interrupt();
+				burnerModel.removeObserver(panController);
+				isPan = false;
+			}
+		}
+	}
 
     @Override
     public void changeTemperature(float size) {

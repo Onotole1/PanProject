@@ -19,14 +19,15 @@ import static com.spitchenko.panproject.MainActivity.h;
  *
  * @author anatoliy
  */
-public class PanSoupView implements PanView, PanObserver {
+class PanSoupView implements PanView, PanObserver {
     private Context mContext;
 
-    public PanSoupView(Context context) {
+    PanSoupView(Context context) {
         mContext = context;
     }
 
     @Override
+    @SuppressWarnings("all")
     public void update(float temperature, float sizeWater, boolean pan) {
         Message msg = new Message();
         msg.arg1 = (int)temperature;
@@ -75,7 +76,6 @@ public class PanSoupView implements PanView, PanObserver {
 
             msg.obj = gifFromResource;
             h.sendMessage(msg);
-            //mImageView.setImageDrawable(gifFromResource);
         } catch (IOException e) {
             e.printStackTrace();
         }

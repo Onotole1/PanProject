@@ -39,14 +39,11 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//GifImageView mImageViewPan = (GifImageView)findViewById(R.id.activity_main_pan_image_view_pan);
 		ButterKnife.bind(this);
 
 		h = new Handler(new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
-				//tvInfo.setText("Закачано файлов: " + msg.what);
-				//if (msg.arg1 >= 0 && msg.what <= 100)
 				mTemperatureWaterTextView.setText("Температуры воды " + msg.arg1 + " V воды " + msg.arg2);
 				mImageViewPan.setImageDrawable((GifDrawable)msg.obj);
 				return true;
@@ -56,31 +53,13 @@ public class MainActivity extends AppCompatActivity {
 		h1 = new Handler(new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
-				//tvInfo.setText("Закачано файлов: " + msg.what);
-				//if (msg.arg1 >= 0 && msg.what <= 100)
 				mImageViewBurner.setImageResource(msg.arg1);
 				return true;
 			}
 		});
 
-		//GasBurnerModel gasBurnerModel = new GasBurnerModel();
-
 		GasBurnerController gasBurnerController = new GasBurnerController(this, mPanButton, mCapButton);
-		//gasBurnerController.onProgressChanged(mSeekBar);
 		mSeekBar.setOnSeekBarChangeListener(gasBurnerController);
-		//GasBurnerView gasBurnerView = new GasBurnerView();
-		//gasBurnerModel.registerObserver(gasBurnerView);
-
-
-		//PanSoup panSoup = new PanSoup();
-		//PanController panController = new PanController(mCapButton, panSoup);
-		//gasBurnerModel.registerObserver(panController);
-		//PanSoupView panSoupView = new PanSoupView(this);
-		//panSoup.registerObserver(panSoupView);
-
-
-
-
 	}
 
 

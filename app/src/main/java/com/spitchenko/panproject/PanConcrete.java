@@ -10,9 +10,11 @@ import com.spitchenko.panproject.MyObserver.PanSubject;
 /**
  * Created by anatoliy on 25.12.16.
  */
-public class PanSoup implements PanModel, Runnable, PanSubject {
+public class PanConcrete implements PanModel, Runnable, PanSubject {
     private volatile float sizeWater = 100f;
     //private float sizePan = 2f;
+
+    private volatile boolean runThread;
 
     private volatile float temperatureWater = 95f;
     private boolean cap = true;
@@ -65,7 +67,8 @@ public class PanSoup implements PanModel, Runnable, PanSubject {
 
     @Override
     public void run() {
-        while (true) {
+        runThread = true;
+        while (runThread) {
             if (temperatureBurner != 0f && cap && sizeWater > 0f) {
                 try {
                     if (temperatureWater < 100f) {
@@ -126,5 +129,9 @@ public class PanSoup implements PanModel, Runnable, PanSubject {
         for (PanObserver observer:observers) {
             observer.update(this.temperatureWater, this.sizeWater, this.cap);
         }
+    }
+
+    public void setRunThread(boolean runThread) {
+        this.runThread = runThread;
     }
 }

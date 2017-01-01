@@ -7,17 +7,20 @@ import com.spitchenko.panproject.MyObserver.BurnerObserver;
 import com.spitchenko.panproject.MyObserver.BurnerSubject;
 
 /**
- * Created by anatoliy on 26.12.16.
+ * Date: 26.12.16
+ * Time: 0:52
+ *
+ * @author anatoliy
  */
-public class GasBurnerModel implements BurnerModel, BurnerSubject {
-    private float maxBurn = 100f;
+class GasBurnerModel implements BurnerModel, BurnerSubject {
     private float minBurn = 0f;
     private float burn = minBurn;
 
     private ArrayList<BurnerObserver> observers = new ArrayList<>();
 
 
-    public void setBurn(float size) {
+    void setBurn(float size) {
+        float maxBurn = 100f;
         if (size > maxBurn) {
             this.burn = maxBurn;
             notifyObservers();
@@ -32,7 +35,7 @@ public class GasBurnerModel implements BurnerModel, BurnerSubject {
         }
     }
 
-    public float getBurn() {
+    float getBurn() {
         return this.burn;
     }
 

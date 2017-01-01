@@ -12,12 +12,10 @@ import com.spitchenko.panproject.MyObserver.BurnerObserver;
  *
  * @author anatoliy
  */
-public class PanController implements BurnerObserver, com.spitchenko.panproject.MVC.PanController {
-	PanModel mPanModel;
-	private Button capButton;
+class PanController implements BurnerObserver, com.spitchenko.panproject.MVC.PanController {
+	private PanModel mPanModel;
 
-	public PanController(Button capButton, PanModel panModel) {
-		this.capButton = capButton;
+	PanController(Button capButton, PanModel panModel) {
 		mPanModel = panModel;
 		capButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -29,20 +27,10 @@ public class PanController implements BurnerObserver, com.spitchenko.panproject.
 			}
 		});
 	}
-	//private SeekBar mSeekBarWater;
-	//final PipedOutputStream output = new PipedOutputStream();
 
 	@Override
 	public void update(float temperature) {
 		mPanModel.setTemperatureBurner(temperature);
 	}
-
-	/*@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.activity_main_pan_button:
-
-		}
-	}*/
 
 }
