@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/activity_main"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingTop="@dimen/activity_vertical_margin"
+	tools:context="com.spitchenko.panproject.MainActivity">
+
+	<TextView
+		android:id="@+id/activity_main_text_view_temperature_water"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Hello World!" />
+
+	<Button
+		android:id="@+id/activity_main_pan_button"
+		android:layout_width="175dp"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:layout_below="@+id/activity_main_pan_image_view_burner"
+		android:layout_marginTop="17dp"
+		android:text="Кастрюля" />
+
+	<Button
+		android:id="@+id/activity_main_cap_button"
+		android:layout_width="175dp"
+		android:layout_height="wrap_content"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignTop="@+id/activity_main_pan_button"
+		android:text="Крышка" />
+
+	<ImageView
+		android:id="@+id/activity_main_pan_image_view_burner"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentRight="true"
+		android:layout_marginTop="28dp"
+		app:srcCompat="@drawable/burner_50" />
+
+	<SeekBar
+		style="@style/Widget.AppCompat.SeekBar.Discrete"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:max="4"
+		android:progress="0"
+		android:layout_below="@+id/activity_main_pan_button"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="15dp"
+		android:id="@+id/activity_main_burn_seekBar" />
+
+	<pl.droidsonroids.gif.GifImageView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/activity_main_pan_image_view_pan"
+		android:layout_alignBottom="@+id/activity_main_pan_image_view_burner"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
+		android:layout_marginRight="14dp"
+		android:layout_marginEnd="14dp"
+		android:layout_marginBottom="16dp" />
+
+</RelativeLayout>
