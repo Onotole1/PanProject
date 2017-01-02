@@ -1,5 +1,6 @@
 package com.spitchenko.panproject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.spitchenko.panproject.MVC.BurnerModel;
@@ -12,49 +13,33 @@ import com.spitchenko.panproject.MyObserver.BurnerSubject;
  *
  * @author anatoliy
  */
-class GasBurnerModel implements BurnerModel, BurnerSubject {
-    private float minBurn = 0f;
-    private float burn = minBurn;
+class GasBurnerModel implements BurnerModel, BurnerSubject, Serializable{
+    private float mBurn;
 
-    private ArrayList<BurnerObserver> observers = new ArrayList<>();
+    private ArrayList<BurnerObserver> mObservers = new ArrayList<>();
 
 
     void setBurn(float size) {
-        float maxBurn = 100f;
-        if (size > maxBurn) {
-            this.burn = maxBurn;
+            this.mBurn = size;
             notifyObservers();
-        }
-        else if (size < minBurn) {
-            this.burn = minBurn;
-            notifyObservers();
-        }
-        else {
-            this.burn = size;
-            notifyObservers();
-        }
-    }
-
-    float getBurn() {
-        return this.burn;
     }
 
     @Override
     public void registerObserver(BurnerObserver observer) {
-        observers.add(observer);
+        mObservers.add(observer);
     }
 
     @Override
     public void removeObserver(BurnerObserver observer) {
-        int i = observers.indexOf(observer);
+        int i = mObservers.indexOf(observer);
         if (i >= 0)
-            observers.remove(observers.indexOf(observer));
+            mObservers.remove(mObservers.indexOf(observer));
     }
 
     @Override
     public void notifyObservers() {
-        for (BurnerObserver observer:observers) {
-            observer.update(this.burn);
+        for (BurnerObserver observer:mObservers) {
+            observer.update(this.mBurn);
         }
     }
 

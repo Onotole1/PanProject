@@ -1,10 +1,12 @@
 package com.spitchenko.panproject;
 
+import java.io.Serializable;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
 
+import com.devadvance.circularseekbar.CircularSeekBar;
 import com.spitchenko.panproject.MVC.BurnerController;
 
 /**
@@ -13,77 +15,79 @@ import com.spitchenko.panproject.MVC.BurnerController;
  *
  * @author anatoliy
  */
-class GasBurnerController implements BurnerController, SeekBar.OnSeekBarChangeListener {
-    private GasBurnerModel burnerModel;
-	private boolean isPan;
-	private PanController panController;
-	private PanConcrete panConcrete;
-	private PanSoupView panSoupView;
-	private Thread thread;
-	private Button capButton;
-	private Context context;
+class GasBurnerController implements BurnerController, CircularSeekBar.OnCircularSeekBarChangeListener, Serializable {
+    private GasBurnerModel mGasBurnerModel;
+
+	private boolean mIsPan;
+	private PanConcreteController mPanConcreteController;
+	private PanConcreteModel mPanConcreteModel;
+	private PanConcreteView mPanConcreteView;
+	private transient Thread mThread;
+	private Button mCapButton;
+	private transient Context mContext;
 
     GasBurnerController(Context context, Button buttonPan, Button buttonCap) {
-	    burnerModel = new GasBurnerModel();
+	    mGasBurnerModel = new GasBurnerModel();
 	    GasBurnerView gasBurnerView = new GasBurnerView();
-	    burnerModel.registerObserver(gasBurnerView);
-		this.capButton = buttonCap;
-		isPan = false;
-		this.context = context;
+	    mGasBurnerModel.registerObserver(gasBurnerView);
+		this.mCapButton = buttonCap;
+	    mIsPan = false;
+		this.mContext = context;
 	    View.OnClickListener oclBtnOk = new ViewOnClickListener();
 
 	    buttonPan.setOnClickListener(oclBtnOk);
 
     }
 
+	@Override
+	public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+		mGasBurnerModel.setBurn(progress);
+	}
+
+	@Override
+	public void onStopTrackingTouch(CircularSeekBar seekBar) {
+
+	}
+
+	@Override
+	public void onStartTrackingTouch(CircularSeekBar seekBar) {
+
+	}
 
 	private class ViewOnClickListener implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
 
-			if (!isPan) {
+			if (!mIsPan) {
 
-				panConcrete = new PanConcrete();
-				panController = new PanController(capButton, panConcrete);
-				panSoupView = new PanSoupView(context);
-				panController = new PanController(capButton, panConcrete);
-				thread = new Thread(panConcrete);
-				burnerModel.registerObserver(panController);
-				panConcrete.registerObserver(panSoupView);
-				thread.start();
-				burnerModel.notifyObservers();
-				isPan = true;
+				mPanConcreteModel = new PanConcreteModel();
+				mPanConcreteController = new PanConcreteController(mCapButton, mPanConcreteModel);
+				mPanConcreteView = new PanConcreteView(mContext);
+				threadStart();
+				mIsPan = true;
 			}
 			else {
-				panConcrete.setRunThread(false);
-				panConcrete.removeObserver(panSoupView);
-				thread.interrupt();
-				burnerModel.removeObserver(panController);
-				isPan = false;
+				unSubscribe();
 			}
 		}
 	}
 
-    @Override
-    public void changeTemperature(float size) {
-		burnerModel.setBurn(burnerModel.getBurn() + size);
+	private void threadStart() {
+		this.mIsPan = true;
+		mGasBurnerModel.registerObserver(mPanConcreteController);
+		mPanConcreteModel.registerObserver(mPanConcreteView);
+		mGasBurnerModel.notifyObservers();
+		mPanConcreteModel.setRunThread(false);
+		mThread = new Thread(mPanConcreteModel);
+		mThread.start();
 	}
 
-	@Override
-	public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-		burnerModel.setBurn((float)i * 25);
+	private void unSubscribe() {
+		mPanConcreteModel.setRunThread(false);
+		mPanConcreteModel.removeObserver(mPanConcreteView);
+		mThread.interrupt();
+		mGasBurnerModel.removeObserver(mPanConcreteController);
+		mIsPan = false;
 	}
-
-	@Override
-	public void onStartTrackingTouch(SeekBar seekBar) {
-
-	}
-
-	@Override
-	public void onStopTrackingTouch(SeekBar seekBar) {
-
-	}
-
-
 }

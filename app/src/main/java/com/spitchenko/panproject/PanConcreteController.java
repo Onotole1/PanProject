@@ -1,5 +1,7 @@
 package com.spitchenko.panproject;
 
+import java.io.Serializable;
+
 import android.view.View;
 import android.widget.Button;
 
@@ -12,10 +14,10 @@ import com.spitchenko.panproject.MyObserver.BurnerObserver;
  *
  * @author anatoliy
  */
-class PanController implements BurnerObserver, com.spitchenko.panproject.MVC.PanController {
+class PanConcreteController implements BurnerObserver, com.spitchenko.panproject.MVC.PanController, Serializable {
 	private PanModel mPanModel;
 
-	PanController(Button capButton, PanModel panModel) {
+	PanConcreteController(Button capButton, PanModel panModel) {
 		mPanModel = panModel;
 		capButton.setOnClickListener(new View.OnClickListener() {
 			@Override

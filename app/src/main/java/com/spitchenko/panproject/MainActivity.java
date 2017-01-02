@@ -5,8 +5,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.devadvance.circularseekbar.CircularSeekBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,14 +27,14 @@ public class MainActivity extends AppCompatActivity {
 	@BindView(R.id.activity_main_pan_image_view_pan)
 	GifImageView mImageViewPan;
 
-	@BindView(R.id.activity_main_burn_seekBar)
-	SeekBar mSeekBar;
-
 	@BindView(R.id.activity_main_text_view_temperature_water)
 	TextView mTemperatureWaterTextView;
 
-	public static Handler h;
-	public static Handler h1;
+	@BindView(R.id.circularSeekBar1)
+	CircularSeekBar mProgressCircle;
+
+	public static Handler sHandler;
+	public static Handler sHandler1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +42,16 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 
-		h = new Handler(new Handler.Callback() {
+		sHandler = new Handler(new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
-				mTemperatureWaterTextView.setText("Температуры воды " + msg.arg1 + " V воды " + msg.arg2);
+				mTemperatureWaterTextView.setText("Температура воды = " + msg.arg1 + " V воды = " + msg.arg2 + "%");
 				mImageViewPan.setImageDrawable((GifDrawable)msg.obj);
 				return true;
 			}
 		});
 
-		h1 = new Handler(new Handler.Callback() {
+		sHandler1 = new Handler(new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
 				mImageViewBurner.setImageResource(msg.arg1);
@@ -59,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		GasBurnerController gasBurnerController = new GasBurnerController(this, mPanButton, mCapButton);
-		mSeekBar.setOnSeekBarChangeListener(gasBurnerController);
+		mProgressCircle.setOnSeekBarChangeListener(gasBurnerController);
 	}
-
-
 }

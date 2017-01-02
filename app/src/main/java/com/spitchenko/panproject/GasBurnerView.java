@@ -1,12 +1,14 @@
 package com.spitchenko.panproject;
 
+import java.io.Serializable;
+
 import android.os.Message;
 
 import com.spitchenko.panproject.MVC.PanView;
 import com.spitchenko.panproject.MyObserver.BurnerObserver;
 
 
-import static com.spitchenko.panproject.MainActivity.h1;
+import static com.spitchenko.panproject.MainActivity.sHandler1;
 
 /**
  * Date: 26.12.16
@@ -14,13 +16,11 @@ import static com.spitchenko.panproject.MainActivity.h1;
  *
  * @author anatoliy
  */
-public class GasBurnerView implements PanView, BurnerObserver {
-    private float temperatureView;
+class GasBurnerView implements PanView, BurnerObserver, Serializable {
 
     @Override
     public void update(float temperatureView) {
-        this.temperatureView = temperatureView;
-        System.out.println("Ручка повёрнута на " + this.temperatureView + " процентов");
+        System.out.println("Ручка повёрнута на " + temperatureView + " процентов");
         int drawable = 0;
         if (temperatureView == 0)
             drawable = R.drawable.burner_0;
@@ -34,6 +34,6 @@ public class GasBurnerView implements PanView, BurnerObserver {
             drawable = R.drawable.burner_100;
         Message msg = new Message();
         msg.arg1 = drawable;
-        h1.sendMessage(msg);
+        sHandler1.sendMessage(msg);
     }
 }

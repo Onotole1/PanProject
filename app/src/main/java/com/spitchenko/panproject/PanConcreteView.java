@@ -1,6 +1,7 @@
 package com.spitchenko.panproject;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import android.content.Context;
 import android.os.Message;
@@ -11,7 +12,7 @@ import com.spitchenko.panproject.MyObserver.PanObserver;
 import pl.droidsonroids.gif.GifDrawable;
 
 
-import static com.spitchenko.panproject.MainActivity.h;
+import static com.spitchenko.panproject.MainActivity.sHandler;
 
 /**
  * Date: 26.12.16
@@ -19,10 +20,10 @@ import static com.spitchenko.panproject.MainActivity.h;
  *
  * @author anatoliy
  */
-class PanSoupView implements PanView, PanObserver {
+class PanConcreteView implements PanView, PanObserver, Serializable {
     private Context mContext;
 
-    PanSoupView(Context context) {
+    PanConcreteView(Context context) {
         mContext = context;
     }
 
@@ -75,7 +76,7 @@ class PanSoupView implements PanView, PanObserver {
 
 
             msg.obj = gifFromResource;
-            h.sendMessage(msg);
+            sHandler.sendMessage(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,7 +87,7 @@ class PanSoupView implements PanView, PanObserver {
         Message msg = new Message();
         try {
             msg.obj = new GifDrawable(mContext.getResources(), R.drawable.pan_null);
-            h.sendMessage(msg);
+            sHandler.sendMessage(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

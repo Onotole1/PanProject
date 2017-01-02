@@ -11,13 +11,6 @@
 	android:paddingTop="@dimen/activity_vertical_margin"
 	tools:context="com.spitchenko.panproject.MainActivity">
 
-	<TextView
-		android:id="@+id/activity_main_text_view_temperature_water"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/text_view_temperature" />
-
-
 
 	<ImageView
 		android:id="@+id/activity_main_pan_image_view_burner"
@@ -30,9 +23,9 @@
 		app:srcCompat="@drawable/burner_0" />
 
 	<LinearLayout
-		android:orientation="horizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
 		android:id="@+id/activity_main_linear_layout"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"
@@ -40,34 +33,45 @@
 
 		<Button
 			android:id="@+id/activity_main_pan_button"
-			android:layout_width="0dp"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/pan_image_name"
 			android:layout_weight="1" />
 
 		<Button
 			android:id="@+id/activity_main_cap_button"
-			android:layout_width="0dp"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/pan_cap_button"
 			android:layout_weight="1" />
 	</LinearLayout>
+
+	<TextView
+		android:id="@+id/activity_main_text_view_temperature_water"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/text_view_temperature"
+		android:layout_alignParentTop="true"
+		android:layout_toRightOf="@+id/circularSeekBar1"
+		android:layout_toEndOf="@+id/circularSeekBar1"
+		android:layout_marginLeft="54dp"
+		android:layout_marginStart="54dp" />
+
+	<pl.droidsonroids.gif.GifImageView
+		android:id="@+id/activity_main_pan_image_view_pan"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_alignParentTop="true"
+		android:layout_alignLeft="@+id/activity_main_pan_image_view_burner"
+		android:layout_alignStart="@+id/activity_main_pan_image_view_burner" />
 
 	<com.devadvance.circularseekbar.CircularSeekBar
 		android:id="@+id/circularSeekBar1"
 		app:max="100"
 		android:layout_width="130dp"
 		android:layout_height="130dp"
-		android:layout_below="@+id/activity_main_pan_image_view_burner"
-		android:layout_centerHorizontal="true" />
-
-	<pl.droidsonroids.gif.GifImageView
-		android:id="@+id/activity_main_pan_image_view_pan"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginBottom="25dp"
-		android:layout_above="@+id/circularSeekBar1"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true" />
+		android:layout_centerVertical="true"
+		android:layout_toRightOf="@+id/activity_main_linear_layout"
+		android:layout_toEndOf="@+id/activity_main_linear_layout" />
 
 </RelativeLayout>
