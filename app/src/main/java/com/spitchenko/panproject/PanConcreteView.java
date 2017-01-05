@@ -87,6 +87,7 @@ class PanConcreteView implements PanView, PanObserver, Serializable {
         Message msg = new Message();
         try {
             msg.obj = new GifDrawable(mContext.getResources(), R.drawable.pan_null);
+            msg.arg1 = -1;
             sHandler.sendMessage(msg);
         } catch (IOException e) {
             e.printStackTrace();

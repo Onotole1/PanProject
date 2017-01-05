@@ -1,7 +1,10 @@
 package com.spitchenko.panproject.MVC;
 
 /**
- * Created by anatoliy on 25.12.16.
+ * Date: 25.12.16
+ * Time: 0:16
+ *
+ * @author anatoliy
  */
 public interface PanModel {
 	void setTemperatureBurner(float temperatureBurner);

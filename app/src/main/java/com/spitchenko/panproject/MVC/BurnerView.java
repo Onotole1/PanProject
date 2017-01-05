@@ -1,7 +1,10 @@
 package com.spitchenko.panproject.MVC;
 
 /**
- * Created by anatoliy on 26.12.16.
+ * Date: 26.12.16
+ * Time: 0:16
+ *
+ * @author anatoliy
  */
 public interface BurnerView {
 	//void drawBurner();

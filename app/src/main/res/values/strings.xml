@@ -3,5 +3,5 @@
 	<string name="pan_image_name">Кастрюля</string>
 	<string name="pan_cap_button">Крышка</string>
 	<string name="burner_description">Это газовая горелка</string>
-	<string name="text_view_temperature">Поверните ручку вправо</string>
+	<string name="text_view_temperature">Поставьте кастрюлю на плиту</string>
 </resources>
