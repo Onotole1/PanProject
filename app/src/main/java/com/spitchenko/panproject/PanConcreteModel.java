@@ -146,22 +146,6 @@ class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanMode
         return this.mCap;
     }
 
-    float getSizeWater() {
-        return mSizeWater;
-    }
-
-    float getTemperatureWater() {
-        return mTemperatureWater;
-    }
-
-    void setSizeWater(float sizeWater) {
-        mSizeWater = sizeWater;
-    }
-
-    void setTemperatureWater(float temperatureWater) {
-        mTemperatureWater = temperatureWater;
-    }
-
     @Override
     protected void onCancelled() {
         super.onCancelled();
@@ -170,10 +154,6 @@ class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanMode
             removeObserver(p);
         }
     }
-
-	ArrayList<PanObserver> getObservers() {
-		return observers;
-	}
 
 	/**
 	 * Метод имитирует длительность процессов
