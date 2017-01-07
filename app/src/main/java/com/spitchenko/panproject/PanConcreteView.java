@@ -1,13 +1,12 @@
 package com.spitchenko.panproject;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Message;
 
 import com.spitchenko.panproject.MVC.PanView;
-import com.spitchenko.panproject.MyObserver.PanObserver;
 
 import pl.droidsonroids.gif.GifDrawable;
 
@@ -20,7 +19,8 @@ import static com.spitchenko.panproject.MainActivity.sHandler;
  *
  * @author anatoliy
  */
-class PanConcreteView implements PanView, PanObserver, Serializable {
+class PanConcreteView implements PanView {
+    //ссылка на контекст необходима для извлечения ресурсов
     private Context mContext;
 
     PanConcreteView(Context context) {
@@ -58,20 +58,28 @@ class PanConcreteView implements PanView, PanObserver, Serializable {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_0);
             } else if (sizeWater > 0f && sizeWater <= 25f && pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_cap_25_boiling);
+                panBoilBul();
             } else if (sizeWater > 25f && sizeWater <= 50f && pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_cap_50_boiling);
+                panBoilBul();
             } else if (sizeWater > 50f && sizeWater <= 75f && pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_cap_75_boiling);
+                panBoilBul();
             } else if (sizeWater > 75f && sizeWater <= 100f && pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_cap_100_boiling);
+                panBoilBul();
             } else if (sizeWater > 0f && sizeWater <= 25f && !pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_25_boiling);
+                panBoilBul();
             } else if (sizeWater > 25f && sizeWater <= 50f && !pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_50_boiling);
+                panBoilBul();
             } else if (sizeWater > 50f && sizeWater <= 75f && !pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_75_boiling);
+                panBoilBul();
             } else if (sizeWater > 75f && sizeWater <= 100f && !pan && temperature >= 100) {
                 gifFromResource = new GifDrawable(mContext.getResources(), R.drawable.pan_100_boiling);
+                panBoilBul();
             }
 
 
@@ -93,5 +101,13 @@ class PanConcreteView implements PanView, PanObserver, Serializable {
             e.printStackTrace();
         }
 
+    }
+
+	/**
+	 * Метод воспроизведения звука кипящей воды
+	 */
+    private void panBoilBul() {
+	    MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bul);
+        mediaPlayer.start();
     }
 }

@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devadvance.circularseekbar.CircularSeekBar;
-import com.spitchenko.panproject.MyObserver.PanObserver;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
 	public static Handler sHandler1;
 	public static Handler sHandler2;
 
-	PanConcreteModel mPanConcreteModel;
-	GasBurnerModel mGasBurnerModel;
-	PanConcreteController mPanConcreteController;
-	GasBurnerController mGasBurnerController;
-	SharedPreferences mSharedPrefs;
-	Context mContext = this;
+	private PanConcreteModel mPanConcreteModel;
+	private GasBurnerModel mGasBurnerModel;
+	private PanConcreteController mPanConcreteController;
+	private GasBurnerController mGasBurnerController;
+	private SharedPreferences mSharedPrefs;
+	private Context mContext = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,29 +53,67 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 
-		sHandler = new Handler(new Handler.Callback() {
-			@Override
-			public boolean handleMessage(android.os.Message msg) {
-				mImageViewPan.setImageDrawable((GifDrawable)msg.obj);
-				if (msg.arg1 == -1) {
-					mTemperatureWaterTextView.setText(getResources().getString(R.string.text_view_temperature));
-					return true;
-				}
-				mTemperatureWaterTextView.setText("Температура воды = " + msg.arg1 + " V воды = " + msg.arg2 + "%");
+		//Первый хандлер ставит в очередь главного потока сообщения от представления кастрюли
+		sHandler = new Handler(newHandlerPanViewCallback());
+
+		//Второй хандлер обрабатывает сообщения представления конфорки
+		sHandler1 = new Handler(newHandlerBurnerViewCallback());
+
+		//Третий хандлер обрабатывает нажатия на кнопку создания кастрюли контроллера кастрюли
+		sHandler2 = new Handler(newHandlerPanControllerCallback());
+
+		initGasBurner();
+
+		initPan();
+
+		initCircleSeekBar();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		mSharedPrefs = getPreferences(MODE_PRIVATE);
+		SharedPreferences.Editor mEditor = mSharedPrefs.edit();
+		int mProgress = mProgressCircle.getProgress();
+		mEditor.putInt("mMySeekBarProgress", mProgress);
+		/*if (mPanConcreteModel != null) {
+			mEditor.putFloat("mPanConcreteModelTemperatureWater", mPanConcreteModel.getTemperatureWater());
+			mEditor.putFloat("mPanConcreteModelSizeWater", mPanConcreteModel.getSizeWater());
+			mEditor.putBoolean("mPanConcreteModelCap", mPanConcreteModel.isCap());
+			for (PanObserver p:mPanConcreteModel.getObservers()) {
+				mPanConcreteModel.removeObserver(p);
+			}
+			mPanConcreteModel.cancel(false);
+		}*/
+		mEditor.apply();
+	}
+
+	private Handler.Callback newHandlerPanViewCallback() {
+		return new Handler.Callback() {
+		@Override
+		public boolean handleMessage(android.os.Message msg) {
+			mImageViewPan.setImageDrawable((GifDrawable) msg.obj);
+			if (msg.arg1 == -1) {
+				mTemperatureWaterTextView.setText(getResources().getString(R.string.text_view_temperature));
 				return true;
 			}
-		});
-
-		sHandler1 = new Handler(new Handler.Callback() {
+			mTemperatureWaterTextView.setText("Температура воды = " + msg.arg1 + "°C V воды = " + msg.arg2 + "%");
+			return true;
+		}
+		};
+	}
+	private Handler.Callback newHandlerBurnerViewCallback() {
+		return new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
 				mImageViewBurner.setImageResource(msg.arg1);
 				return true;
 			}
-		});
+		};
+	}
 
-
-		sHandler2 = new Handler(new Handler.Callback() {
+	private Handler.Callback newHandlerPanControllerCallback() {
+		return new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
 				mSharedPrefs = getPreferences(MODE_PRIVATE);
@@ -96,28 +133,43 @@ public class MainActivity extends AppCompatActivity {
 				}
 				return true;
 			}
-		});
+		};
+	}
 
+	/**
+	 * Инициализация конфорки согласно паттерну MVC
+	 */
+	private void initGasBurner() {
 		mGasBurnerModel = new GasBurnerModel();
 		mGasBurnerController = new GasBurnerController(mGasBurnerModel);
 		GasBurnerView gasBurnerView = new GasBurnerView();
 		mGasBurnerModel.registerObserver(gasBurnerView);
+	}
 
-		mPanConcreteController = new PanConcreteController(mPanButton, mCapButton);
-
-		try {
+	/**
+	 * Инициализация кастрюли согласно паттерну MVC с загрузкой предыдущего состояния
+	 */
+	private void initPan() {
+		mPanConcreteController = new PanConcreteController(mPanButton, mCapButton, this);
+		/*try {
 			mSharedPrefs = getPreferences(MODE_PRIVATE);
 			String mPanControllerState = mSharedPrefs.getString("mPanControllerState", "");
 			if (mPanControllerState.equals("true")) {
-				mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
-				if (mPanConcreteModel == null) {
-					mPanConcreteModel = new PanConcreteModel();
-					mPanConcreteModel.execute();
-				}
+				float mPanConcreteModelTemperatureWater = mSharedPrefs.getFloat("mPanConcreteModelTemperatureWater", -1);
+				float mPanConcreteModelSizeWater = mSharedPrefs.getFloat("mPanConcreteModelSizeWater", -1);
+				boolean mPanConcreteModelCap = mSharedPrefs.getBoolean("mPanConcreteModelCap", false);
 
-				for (PanObserver p:mPanConcreteModel.getObservers()) {
-					mPanConcreteModel.removeObserver(p);
-				}
+				mPanConcreteModel = new PanConcreteModel();
+				mPanConcreteModel.setCap(mPanConcreteModelCap);
+				mPanConcreteModel.setTemperatureWater(mPanConcreteModelTemperatureWater);
+				mPanConcreteModel.setSizeWater(mPanConcreteModelSizeWater);
+				mPanConcreteModel.execute();
+				Log.d("mPanConcreteModelId", mPanConcreteModel.toString());
+				SharedPreferences.Editor editor = mSharedPrefs.edit();
+				editor.remove("mPanConcreteModelTemperatureWater");
+				editor.remove("mPanConcreteModelSizeWater");
+				editor.remove("mPanConcreteModelCap");
+				editor.apply();
 
 				mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
 				mGasBurnerModel.registerObserver(mPanConcreteController);
@@ -126,12 +178,32 @@ public class MainActivity extends AppCompatActivity {
 				mPanConcreteModel.registerObserver(panConcreteView);
 				mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
 			}
-
 		} catch (NullPointerException e) {
 			Log.d("mSharedPrefs", " = null");
+		}*/
+		mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
+		if (mPanConcreteModel != null) {
+			Log.d("mPanConcreteLast", mPanConcreteModel.toString());
 		}
+		else {
+			mPanConcreteModel = new PanConcreteModel();
+			mPanConcreteModel.execute();
+			Log.d("mPanConcreteModelId", mPanConcreteModel.toString());
 
 
+			PanConcreteView panConcreteView = new PanConcreteView(this);
+			mPanConcreteModel.registerObserver(panConcreteView);
+			mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+		}
+		mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
+		mGasBurnerModel.registerObserver(mPanConcreteController);
+		mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+	}
+
+	/**
+	 * Инициализация кругового сикбара
+	 */
+	private void initCircleSeekBar() {
 		mProgressCircle.setOnSeekBarChangeListener(mGasBurnerController);
 		try {
 			mSharedPrefs = getPreferences(MODE_PRIVATE);
@@ -142,20 +214,5 @@ public class MainActivity extends AppCompatActivity {
 		} catch (NullPointerException e) {
 			Log.d("mSharedPrefs", " = null");
 		}
-	}
-
-	@Override
-	public Object onRetainCustomNonConfigurationInstance() {
-		return mPanConcreteModel;
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		mSharedPrefs = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor mEditor = mSharedPrefs.edit();
-		int mProgress = mProgressCircle.getProgress();
-		mEditor.putInt("mMySeekBarProgress", mProgress);
-		mEditor.apply();
 	}
 }

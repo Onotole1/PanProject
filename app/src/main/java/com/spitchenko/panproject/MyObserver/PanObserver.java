@@ -7,6 +7,16 @@ package com.spitchenko.panproject.MyObserver;
  * @author anatoliy
  */
 public interface PanObserver {
+	/**
+     * Метод, обновляющий объект представления кастрюли
+     * @param temperature - температура
+     * @param sizeWater - объём воды в процентах
+     * @param pan - наличие у кастрюли крышки
+     */
     void update(float temperature, float sizeWater, boolean pan);
+
+	/**
+	 * Метод очистки экрана от представления
+	 */
     void finished();
 }

@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.spitchenko.panproject.MVC.PanModel;
 import com.spitchenko.panproject.MyObserver.PanObserver;
-import com.spitchenko.panproject.MyObserver.PanSubject;
 
 /**
  * Date: 02.01.17
@@ -17,13 +16,16 @@ import com.spitchenko.panproject.MyObserver.PanSubject;
  *
  * @author anatoliy
  */
-class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanSubject, PanModel {
+class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanModel {
+    //по умолчанию кастрюля полностью наполнена водой
     private volatile float mSizeWater = 100f;
 
     private volatile float mTemperatureBurner;
 
+    //по умолчанию вода комнатной температуры
     private volatile float mTemperatureWater = 20f;
 
+    //по умолчанию кастрюля накрыта крышкой
     private volatile boolean mCap = true;
 
     private volatile ArrayList<PanObserver> observers = new ArrayList<>();
@@ -37,60 +39,59 @@ class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanSubj
     @Override
     protected Void doInBackground(Void... voids) {
         while (!isCancelled()) {
+	        Log.d("PanConcreteModel", mTemperatureWater + " " + mSizeWater + " " + mCap + " " + mTemperatureBurner + " " + this.toString());
 
-                Log.d("PanConcreteModel", mTemperatureWater + " " + mSizeWater + " " + mCap + " " + mTemperatureBurner + " " + this.toString());
-                if (mTemperatureBurner != 0f && mCap && mSizeWater > 0f) {
-                        if (mTemperatureWater < 100f) {
-                            Log.d("PanConcreteModel", "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater < 100f");
-                            mTemperatureWater += mTemperatureBurner / mSizeWater;
-                            if (mTemperatureWater > 100)
-                                mTemperatureWater = 100;
-                            notifyObservers();
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                Log.d("Interrupt", "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater < 100f");
-                            }
-                        }
-                        else if (mTemperatureWater == 100f) {
-                            Log.d("PanConcreteModel", "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater == 100f");
-                            mSizeWater -= 5f;
-                            notifyObservers();
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                Log.d("Interrupt", "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater == 100f");
-                            }
-                        }
-                } else if (mTemperatureBurner != 0f && !mCap && mSizeWater > 0f) {
+	        //Если конфорка находится в выключенном состоянии, то вода остывает
+	        if (mTemperatureBurner == 0) {
+		        if (mTemperatureWater > 21) {
+			        mTemperatureWater -= 1;
+			        notifyObservers();
+			        asyncInterrupt(1500, "mTemperatureBurner == 0");
+		        }
+	        }
+	        //Если конфорка находится во включенном состоянии, то вода наревается. С крышкой этот процесс быстрее
+	        else if (mTemperatureBurner != 0f && mCap && mSizeWater > 0f) {
+		        if (mTemperatureWater < 100f) {
+			        Log.d("PanConcreteModel", "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater < 100f");
+			        mTemperatureWater += mTemperatureBurner / mSizeWater;
+			        if (mTemperatureWater > 100)
+				        mTemperatureWater = 100;
+			        notifyObservers();
+			        asyncInterrupt(500, "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater < 100f");
+		        }
+		        //Если вода закипела, то она превращается в пар и её объём (жидкости) уменьшается
+		        else if (mTemperatureWater == 100f) {
+			        Log.d("PanConcreteModel", "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater == 100f");
+			        mSizeWater -= 5f;
+			        notifyObservers();
+			        asyncInterrupt(500, "mTemperatureBurner != 0f && mCap && mSizeWater > 0f, mTemperatureWater == 100f");
+		        }
+	        }
+	        //Если конфорка находится во включенном состоянии, то вода наревается. Без крышки этот процесс медленнее
+	        else if (mTemperatureBurner != 0f && !mCap && mSizeWater > 0f) {
+		        if (mTemperatureWater < 100f) {
+			        mTemperatureWater += mTemperatureBurner / mSizeWater;
+			        if (mTemperatureWater > 100)
+				        mTemperatureWater = 100;
+			        Log.d("PanConcreteModel", "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater < 100f");
+			        notifyObservers();
+			        asyncInterrupt(1500, "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater < 100f");
+		        }
+		        //Если вода закипела, то она превращается в пар и её объём (жидкости) уменьшается
+		        else if (mTemperatureWater == 100f) {
+			        mSizeWater -= 5f;
+			        Log.d("PanConcreteModel", "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater == 100f");
+			        notifyObservers();
+			        asyncInterrupt(500, "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater == 100f");
+		        }
+	        }
+	        //Если вся вода выкипела, то ничего кроме оповещения не происходит
+	        else if (mSizeWater == 0f) {
+		        mTemperatureWater = 0f;
+		        notifyObservers();
+	        }
 
-                        if (mTemperatureWater < 100f) {
-                            mTemperatureWater += mTemperatureBurner / mSizeWater;
-                            if (mTemperatureWater > 100)
-                                mTemperatureWater = 100;
-                            Log.d("PanConcreteModel", "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater < 100f");
-                            notifyObservers();
-                            try {
-                                Thread.sleep(1500);
-                            } catch (InterruptedException e) {
-                                Log.d("Interrupt", "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater < 100f");
-                            }
-                        } else if (mTemperatureWater == 100f) {
-                            mSizeWater -= 5f;
-                            Log.d("PanConcreteModel", "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater == 100f");
-                            notifyObservers();
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                Log.d("Interrupt", "mTemperatureBurner != 0f && !mCap && mSizeWater > 0f, mTemperatureWater == 100f");
-                            }
-                        }
-                } else if (mSizeWater == 0f) {
-                    mTemperatureWater = 0f;
-                    notifyObservers();
-                }
-
-            }
+        }
 
         return null;
     }
@@ -145,9 +146,21 @@ class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanSubj
         return this.mCap;
     }
 
-	ArrayList<PanObserver> getObservers() {
-		return observers;
-	}
+    float getSizeWater() {
+        return mSizeWater;
+    }
+
+    float getTemperatureWater() {
+        return mTemperatureWater;
+    }
+
+    void setSizeWater(float sizeWater) {
+        mSizeWater = sizeWater;
+    }
+
+    void setTemperatureWater(float temperatureWater) {
+        mTemperatureWater = temperatureWater;
+    }
 
     @Override
     protected void onCancelled() {
@@ -155,6 +168,23 @@ class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanSubj
         for (PanObserver p:observers) {
             p.finished();
             removeObserver(p);
+        }
+    }
+
+	ArrayList<PanObserver> getObservers() {
+		return observers;
+	}
+
+	/**
+	 * Метод имитирует длительность процессов
+     * @param sleep - время, на которое засыпает поток
+     * @param description - описание ситуации
+     */
+    private void asyncInterrupt(long sleep, String description) {
+        try {
+            Thread.sleep(sleep);
+        } catch (InterruptedException e) {
+            Log.d("Interrupt", description);
         }
     }
 }

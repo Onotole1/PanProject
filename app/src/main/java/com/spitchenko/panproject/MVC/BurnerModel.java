@@ -1,7 +1,17 @@
 package com.spitchenko.panproject.MVC;
 
+import com.spitchenko.panproject.MyObserver.BurnerSubject;
+
 /**
- * Created by anatoliy on 26.12.16.
+ * Date: 26.12.16
+ * Time: 9:43
+ *
+ * @author anatoliy
  */
-public interface BurnerModel {
+public interface BurnerModel extends BurnerSubject {
+	/**
+	 * Метод, задающий мощность конфорки в процентах
+	 * @param size - мощность конфорки в процентах
+	 */
+	void setBurn(float size);
 }

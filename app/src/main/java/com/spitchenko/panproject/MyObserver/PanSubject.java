@@ -7,8 +7,20 @@ package com.spitchenko.panproject.MyObserver;
  * @author anatoliy
  */
 public interface PanSubject {
-
+	/**
+     * Добавление объекта в список наблюдателей за моделью кастрюли
+     * @param observer - объект наблюдатель
+     */
     void registerObserver(PanObserver observer);
+
+	/**
+     * Удаление объекта из списка наблюдателей
+     * @param observer - объект наблюдатель
+     */
     void removeObserver(PanObserver observer);
+
+	/**
+     * Метод оповещения наблюдателей
+     */
     void notifyObservers();
 }

@@ -1,11 +1,8 @@
 package com.spitchenko.panproject;
 
-import java.io.Serializable;
-
 import android.os.Message;
 
-import com.spitchenko.panproject.MVC.PanView;
-import com.spitchenko.panproject.MyObserver.BurnerObserver;
+import com.spitchenko.panproject.MVC.BurnerView;
 
 
 import static com.spitchenko.panproject.MainActivity.sHandler1;
@@ -16,7 +13,7 @@ import static com.spitchenko.panproject.MainActivity.sHandler1;
  *
  * @author anatoliy
  */
-class GasBurnerView implements PanView, BurnerObserver, Serializable {
+class GasBurnerView implements BurnerView {
 
     @Override
     public void update(float temperatureView) {

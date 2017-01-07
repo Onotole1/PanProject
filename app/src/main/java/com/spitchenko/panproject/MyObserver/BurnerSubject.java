@@ -7,7 +7,14 @@ package com.spitchenko.panproject.MyObserver;
  * @author anatoliy
  */
 public interface BurnerSubject {
+	/**
+	 * Добавление объекта в список наблюдателей
+	 * @param observer - объект наблюдатель
+	 */
 	void registerObserver(BurnerObserver observer);
-	void removeObserver(BurnerObserver observer);
+
+	/**
+	 * Метод оповещения наблюдателей
+	 */
 	void notifyObservers();
 }

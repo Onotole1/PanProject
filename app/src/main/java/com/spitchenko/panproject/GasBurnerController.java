@@ -9,7 +9,8 @@ import com.spitchenko.panproject.MVC.BurnerController;
  *
  * @author anatoliy
  */
-class GasBurnerController implements BurnerController, CircularSeekBar.OnCircularSeekBarChangeListener {
+class GasBurnerController implements BurnerController {
+	//Контроллер конфорки хранит ссылку на модель конфорки
     private GasBurnerModel mGasBurnerModel;
 
     GasBurnerController(GasBurnerModel gasBurnerModel) {

@@ -1,12 +1,12 @@
 package com.spitchenko.panproject;
 
-import java.io.Serializable;
-
+import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 
-import com.spitchenko.panproject.MyObserver.BurnerObserver;
+import com.spitchenko.panproject.MVC.PanModel;
 
 
 import static com.spitchenko.panproject.MainActivity.sHandler2;
@@ -17,28 +17,36 @@ import static com.spitchenko.panproject.MainActivity.sHandler2;
  *
  * @author anatoliy
  */
-class PanConcreteController implements BurnerObserver, com.spitchenko.panproject.MVC.PanController, Serializable, View.OnClickListener {
+class PanConcreteController implements com.spitchenko.panproject.MVC.PanController {
+	//Контроллер кастрюли хранит ссылку на объект модели кастрюли
 	private PanConcreteModel mPanConcreteModel;
+	//По умолчанию состояние переменной наличия кастрюли отрицательно
 	private boolean mIsPan = false;
+	//Контекст необходим для извлечения звуковых ресурсов
+	private Context mContext;
+	//Ссылка на кнопку управления крышкой нужна для того, чтобы при отсутствии кастрюли сделать её неактивной
+	private Button mCapButton;
 
-	PanConcreteController(Button panButton, Button capButton) {
+	PanConcreteController(Button panButton, Button capButton, Context context) {
 		panButton.setOnClickListener(new ViewOnClickListenerPan());
 		capButton.setOnClickListener(new ViewOnClickListenerCap());
+		mContext = context;
+		mCapButton = capButton;
+		mCapButton.setEnabled(false);
+
 	}
 
 	@Override
 	public void update(float temperature) {
-		mPanConcreteModel.setTemperatureBurner(temperature);
+		if (mPanConcreteModel != null)
+			mPanConcreteModel.setTemperatureBurner(temperature);
+		if (mPanConcreteModel != null)
+			mCapButton.setEnabled(true);
 	}
 
-	@Override
-	public void onClick(View view) {
-		if (mPanConcreteModel.isCap())
-			mPanConcreteModel.setCap(false);
-		else
-			mPanConcreteModel.setCap(true);
-	}
-
+	/**
+	 * Поведение слушателя кнопки, создающей кастрюлю
+	 */
 	private class ViewOnClickListenerPan implements View.OnClickListener {
 
 		@Override
@@ -46,29 +54,42 @@ class PanConcreteController implements BurnerObserver, com.spitchenko.panproject
 			Message msg = new Message();
 			if (!mIsPan) {
 				mIsPan = true;
+				mCapButton.setEnabled(true);
+				MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.pan_down);
+				mediaPlayer.start();
 				msg.obj = "true";
 				sHandler2.sendMessage(msg);
 			}
 			else {
-				synchronized (this) {
-					mPanConcreteModel.cancel(false);
-					mIsPan = false;
-					msg.obj = "false";
-					sHandler2.sendMessage(msg);
-				}
+				mPanConcreteModel.cancel(false);
+				mPanConcreteModel = null;
+				MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.pan_up);
+				mediaPlayer.start();
+				mCapButton.setEnabled(false);
+				mIsPan = false;
+				msg.obj = "false";
+				sHandler2.sendMessage(msg);
 			}
 		}
 	}
 
+	/**
+	 * Поведение слушателя кнопки, устанавливающей наличие крышки
+	 */
 	private class ViewOnClickListenerCap implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-
-			if (mPanConcreteModel.isCap())
-				mPanConcreteModel.setCap(false);
-			else {
-				mPanConcreteModel.setCap(true);
+			if (mPanConcreteModel != null) {
+				if (mPanConcreteModel.isCap()) {
+					mPanConcreteModel.setCap(false);
+					MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.cap_up);
+					mediaPlayer.start();
+				} else if (!mPanConcreteModel.isCap()) {
+					mPanConcreteModel.setCap(true);
+					MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.cap_down);
+					mediaPlayer.start();
+				}
 			}
 		}
 	}
@@ -77,8 +98,9 @@ class PanConcreteController implements BurnerObserver, com.spitchenko.panproject
 		return mPanConcreteModel;
 	}
 
-	void setPanConcreteModel(PanConcreteModel panConcreteModel) {
-		mPanConcreteModel = panConcreteModel;
+	@Override
+	public void setPanConcreteModel(PanModel panConcreteModel) {
+		mPanConcreteModel = (PanConcreteModel) panConcreteModel;
 		mIsPan = true;
 	}
 }
