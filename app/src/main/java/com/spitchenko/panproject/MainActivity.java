@@ -215,4 +215,9 @@ public class MainActivity extends AppCompatActivity {
 			Log.d("mSharedPrefs", " = null");
 		}
 	}
+
+	@Override
+	public Object onRetainCustomNonConfigurationInstance() {
+		return mPanConcreteModel;
+	}
 }
