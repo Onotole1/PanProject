@@ -2,6 +2,7 @@ package com.spitchenko.panproject;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
@@ -94,13 +95,15 @@ class PanConcreteController implements com.spitchenko.panproject.MVC.PanControll
 		}
 	}
 
-	PanConcreteModel getPanConcreteModel() {
-		return mPanConcreteModel;
-	}
-
 	@Override
 	public void setPanConcreteModel(PanModel panConcreteModel) {
 		mPanConcreteModel = (PanConcreteModel) panConcreteModel;
-		mIsPan = true;
+		if (mPanConcreteModel.getStatus() != AsyncTask.Status.FINISHED) {
+			mIsPan = true;
+			mCapButton.setEnabled(true);
+		} else {
+			mPanConcreteModel = null;
+			mCapButton.setEnabled(false);
+		}
 	}
 }

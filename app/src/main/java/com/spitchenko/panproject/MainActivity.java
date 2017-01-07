@@ -76,15 +76,6 @@ public class MainActivity extends AppCompatActivity {
 		SharedPreferences.Editor mEditor = mSharedPrefs.edit();
 		int mProgress = mProgressCircle.getProgress();
 		mEditor.putInt("mMySeekBarProgress", mProgress);
-		/*if (mPanConcreteModel != null) {
-			mEditor.putFloat("mPanConcreteModelTemperatureWater", mPanConcreteModel.getTemperatureWater());
-			mEditor.putFloat("mPanConcreteModelSizeWater", mPanConcreteModel.getSizeWater());
-			mEditor.putBoolean("mPanConcreteModelCap", mPanConcreteModel.isCap());
-			for (PanObserver p:mPanConcreteModel.getObservers()) {
-				mPanConcreteModel.removeObserver(p);
-			}
-			mPanConcreteModel.cancel(false);
-		}*/
 		mEditor.apply();
 	}
 
@@ -151,36 +142,6 @@ public class MainActivity extends AppCompatActivity {
 	 */
 	private void initPan() {
 		mPanConcreteController = new PanConcreteController(mPanButton, mCapButton, this);
-		/*try {
-			mSharedPrefs = getPreferences(MODE_PRIVATE);
-			String mPanControllerState = mSharedPrefs.getString("mPanControllerState", "");
-			if (mPanControllerState.equals("true")) {
-				float mPanConcreteModelTemperatureWater = mSharedPrefs.getFloat("mPanConcreteModelTemperatureWater", -1);
-				float mPanConcreteModelSizeWater = mSharedPrefs.getFloat("mPanConcreteModelSizeWater", -1);
-				boolean mPanConcreteModelCap = mSharedPrefs.getBoolean("mPanConcreteModelCap", false);
-
-				mPanConcreteModel = new PanConcreteModel();
-				mPanConcreteModel.setCap(mPanConcreteModelCap);
-				mPanConcreteModel.setTemperatureWater(mPanConcreteModelTemperatureWater);
-				mPanConcreteModel.setSizeWater(mPanConcreteModelSizeWater);
-				mPanConcreteModel.execute();
-				Log.d("mPanConcreteModelId", mPanConcreteModel.toString());
-				SharedPreferences.Editor editor = mSharedPrefs.edit();
-				editor.remove("mPanConcreteModelTemperatureWater");
-				editor.remove("mPanConcreteModelSizeWater");
-				editor.remove("mPanConcreteModelCap");
-				editor.apply();
-
-				mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
-				mGasBurnerModel.registerObserver(mPanConcreteController);
-				mPanConcreteModel = mPanConcreteController.getPanConcreteModel();
-				PanConcreteView panConcreteView = new PanConcreteView(this);
-				mPanConcreteModel.registerObserver(panConcreteView);
-				mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
-			}
-		} catch (NullPointerException e) {
-			Log.d("mSharedPrefs", " = null");
-		}*/
 		mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
 		if (mPanConcreteModel != null) {
 			Log.d("mPanConcreteLast", mPanConcreteModel.toString());
@@ -219,5 +180,12 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public Object onRetainCustomNonConfigurationInstance() {
 		return mPanConcreteModel;
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		mPanConcreteModel.cancel(false);
+		mPanConcreteModel = null;
 	}
 }
