@@ -23,27 +23,29 @@
 		app:srcCompat="@drawable/burner_0" />
 
 	<LinearLayout
-		android:orientation="vertical"
+		android:id="@+id/activity_main_linear_layout"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
-		android:id="@+id/activity_main_linear_layout"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true">
+		android:layout_alignParentStart="true"
+		android:orientation="vertical">
 
 		<Button
 			android:id="@+id/activity_main_pan_button"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/pan_image_name"
-			android:layout_weight="1" />
+			android:layout_weight="1"
+			android:background="?android:attr/selectableItemBackground"
+			android:text="@string/pan_image_name" />
 
 		<Button
 			android:id="@+id/activity_main_cap_button"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/pan_cap_button"
-			android:layout_weight="1" />
+			android:layout_weight="1"
+			android:background="?android:attr/selectableItemBackground"
+			android:text="@string/pan_cap_button" />
 	</LinearLayout>
 
 	<pl.droidsonroids.gif.GifImageView
@@ -51,29 +53,30 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_below="@+id/activity_main_text_view_temperature_water"
-		android:layout_toRightOf="@+id/circularSeekBar1"
-		android:layout_toEndOf="@+id/circularSeekBar1" />
+		android:layout_toEndOf="@+id/circularSeekBar1"
+		android:layout_toRightOf="@+id/circularSeekBar1" />
 
 	<com.devadvance.circularseekbar.CircularSeekBar
 		android:id="@+id/circularSeekBar1"
-		app:max="100"
 		android:layout_width="130dp"
 		android:layout_height="130dp"
+		android:layout_centerVertical="true"
 		android:layout_marginLeft="18dp"
 		android:layout_marginStart="18dp"
-		android:layout_centerVertical="true"
+		android:layout_toEndOf="@+id/activity_main_linear_layout"
 		android:layout_toRightOf="@+id/activity_main_linear_layout"
-		android:layout_toEndOf="@+id/activity_main_linear_layout" />
+		android:background="?android:attr/selectableItemBackground"
+		app:max="100" />
 
 	<TextView
 		android:id="@+id/activity_main_text_view_temperature_water"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="@string/text_view_temperature"
+		android:layout_alignLeft="@+id/activity_main_pan_image_view_pan"
+		android:layout_alignParentTop="true"
+		android:layout_alignStart="@+id/activity_main_pan_image_view_pan"
 		android:layout_marginLeft="41dp"
 		android:layout_marginStart="41dp"
-		android:layout_alignParentTop="true"
-		android:layout_alignLeft="@+id/activity_main_pan_image_view_pan"
-		android:layout_alignStart="@+id/activity_main_pan_image_view_pan" />
+		android:text="@string/text_view_temperature" />
 
 </RelativeLayout>

@@ -18,7 +18,6 @@
 		android:text="@string/text_view_temperature" />
 
 
-
 	<ImageView
 		android:id="@+id/activity_main_pan_image_view_burner"
 		android:layout_width="wrap_content"
@@ -30,44 +29,48 @@
 		app:srcCompat="@drawable/burner_0" />
 
 	<LinearLayout
-		android:orientation="horizontal"
+		android:id="@+id/activity_main_linear_layout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/activity_main_linear_layout"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true">
+		android:layout_alignParentStart="true"
+		android:orientation="horizontal">
 
 		<Button
 			android:id="@+id/activity_main_pan_button"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:text="@string/pan_image_name"
-			android:layout_weight="1" />
+			android:layout_weight="1"
+			android:background="?android:attr/selectableItemBackground"
+			android:text="@string/pan_image_name" />
 
 		<Button
 			android:id="@+id/activity_main_cap_button"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:text="@string/pan_cap_button"
-			android:layout_weight="1" />
+			android:layout_weight="1"
+			android:background="?android:attr/selectableItemBackground"
+			android:text="@string/pan_cap_button" />
 	</LinearLayout>
-
-	<com.devadvance.circularseekbar.CircularSeekBar
-		android:id="@+id/circularSeekBar1"
-		app:max="100"
-		android:layout_width="130dp"
-		android:layout_height="130dp"
-		android:layout_below="@+id/activity_main_pan_image_view_burner"
-		android:layout_centerHorizontal="true" />
 
 	<pl.droidsonroids.gif.GifImageView
 		android:id="@+id/activity_main_pan_image_view_pan"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_marginBottom="25dp"
 		android:layout_above="@+id/circularSeekBar1"
 		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true" />
+		android:layout_alignParentStart="true"
+		android:layout_marginBottom="25dp" />
+
+	<com.devadvance.circularseekbar.CircularSeekBar
+		android:id="@+id/circularSeekBar1"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_below="@+id/activity_main_pan_image_view_burner"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="10dp"
+		android:background="?android:attr/selectableItemBackground"
+		app:max="100" />
 
 </RelativeLayout>
