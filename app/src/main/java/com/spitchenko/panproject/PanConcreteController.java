@@ -106,4 +106,8 @@ class PanConcreteController implements com.spitchenko.panproject.MVC.PanControll
 			mCapButton.setEnabled(false);
 		}
 	}
+
+	boolean isPan() {
+		return mIsPan;
+	}
 }

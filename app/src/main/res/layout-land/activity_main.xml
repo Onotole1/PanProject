@@ -46,11 +46,21 @@
 			android:layout_weight="1" />
 	</LinearLayout>
 
+	<pl.droidsonroids.gif.GifImageView
+		android:id="@+id/activity_main_pan_image_view_pan"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/activity_main_text_view_temperature_water"
+		android:layout_toRightOf="@+id/circularSeekBar1"
+		android:layout_toEndOf="@+id/circularSeekBar1" />
+
 	<com.devadvance.circularseekbar.CircularSeekBar
 		android:id="@+id/circularSeekBar1"
 		app:max="100"
 		android:layout_width="130dp"
 		android:layout_height="130dp"
+		android:layout_marginLeft="18dp"
+		android:layout_marginStart="18dp"
 		android:layout_centerVertical="true"
 		android:layout_toRightOf="@+id/activity_main_linear_layout"
 		android:layout_toEndOf="@+id/activity_main_linear_layout" />
@@ -60,18 +70,10 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/text_view_temperature"
-		android:layout_marginLeft="55dp"
-		android:layout_marginStart="55dp"
+		android:layout_marginLeft="41dp"
+		android:layout_marginStart="41dp"
 		android:layout_alignParentTop="true"
-		android:layout_toRightOf="@+id/circularSeekBar1"
-		android:layout_toEndOf="@+id/circularSeekBar1" />
-
-	<pl.droidsonroids.gif.GifImageView
-		android:id="@+id/activity_main_pan_image_view_pan"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_below="@+id/activity_main_text_view_temperature_water"
-		android:layout_toRightOf="@+id/circularSeekBar1"
-		android:layout_toEndOf="@+id/circularSeekBar1" />
+		android:layout_alignLeft="@+id/activity_main_pan_image_view_pan"
+		android:layout_alignStart="@+id/activity_main_pan_image_view_pan" />
 
 </RelativeLayout>

@@ -64,19 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
 		initGasBurner();
 
-		initPan();
+		initPan(savedInstanceState);
 
-		initCircleSeekBar();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		mSharedPrefs = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor mEditor = mSharedPrefs.edit();
-		int mProgress = mProgressCircle.getProgress();
-		mEditor.putInt("mMySeekBarProgress", mProgress);
-		mEditor.apply();
+		initCircleSeekBar(savedInstanceState);
 	}
 
 	private Handler.Callback newHandlerPanViewCallback() {
@@ -140,40 +130,32 @@ public class MainActivity extends AppCompatActivity {
 	/**
 	 * Инициализация кастрюли согласно паттерну MVC с загрузкой предыдущего состояния
 	 */
-	private void initPan() {
+	private void initPan(Bundle savedInstanceState) {
 		mPanConcreteController = new PanConcreteController(mPanButton, mCapButton, this);
-		mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
-		if (mPanConcreteModel != null) {
-			Log.d("mPanConcreteLast", mPanConcreteModel.toString());
+		if (savedInstanceState != null) {
+			if (savedInstanceState.getBoolean("mPanConcreteController")) {
+				mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
+				if (mPanConcreteModel != null) {
+					mPanConcreteModel.notifyObservers();
+					Log.d("mPanConcreteLast", mPanConcreteModel.toString());
+				}
+				mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
+				mGasBurnerModel.registerObserver(mPanConcreteController);
+				mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+			}
 		}
-		else {
-			mPanConcreteModel = new PanConcreteModel();
-			mPanConcreteModel.execute();
-			Log.d("mPanConcreteModelId", mPanConcreteModel.toString());
-
-
-			PanConcreteView panConcreteView = new PanConcreteView(this);
-			mPanConcreteModel.registerObserver(panConcreteView);
-			mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
-		}
-		mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
-		mGasBurnerModel.registerObserver(mPanConcreteController);
-		mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
 	}
 
 	/**
 	 * Инициализация кругового сикбара
 	 */
-	private void initCircleSeekBar() {
-		mProgressCircle.setOnSeekBarChangeListener(mGasBurnerController);
+	private void initCircleSeekBar(Bundle savedInstanceState) {
 		try {
-			mSharedPrefs = getPreferences(MODE_PRIVATE);
-			int mProgress = mSharedPrefs.getInt("mMySeekBarProgress", 0);
-			Log.d("mSharedPrefs", " = " + mProgress);
-			mProgressCircle.setProgress(mProgress);
-			mGasBurnerController.onProgressChanged(mProgressCircle, mProgress, true);
+			mProgressCircle.setOnSeekBarChangeListener(mGasBurnerController);
+			mProgressCircle.setProgress(savedInstanceState.getInt("mMySeekBarProgress"));
+			mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
 		} catch (NullPointerException e) {
-			Log.d("mSharedPrefs", " = null");
+			mProgressCircle.setOnSeekBarChangeListener(mGasBurnerController);
 		}
 	}
 
@@ -187,5 +169,13 @@ public class MainActivity extends AppCompatActivity {
 		super.onBackPressed();
 		mPanConcreteModel.cancel(false);
 		mPanConcreteModel = null;
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		int mProgress = mProgressCircle.getProgress();
+		outState.putInt("mMySeekBarProgress", mProgress);
+		outState.putBoolean("mPanConcreteController", mPanConcreteController.isPan());
 	}
 }
