@@ -1,6 +1,5 @@
 package com.spitchenko.panproject;
 
-import com.devadvance.circularseekbar.CircularSeekBar;
 import com.spitchenko.panproject.MVC.BurnerController;
 
 /**
@@ -18,17 +17,7 @@ class GasBurnerController implements BurnerController {
     }
 
 	@Override
-	public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-		mGasBurnerModel.setBurn(progress);
-	}
-
-	@Override
-	public void onStopTrackingTouch(CircularSeekBar seekBar) {
-
-	}
-
-	@Override
-	public void onStartTrackingTouch(CircularSeekBar seekBar) {
-
+	public void setBurn(float size) {
+		mGasBurnerModel.setBurn(size);
 	}
 }

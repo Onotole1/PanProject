@@ -1,5 +1,6 @@
 package com.spitchenko.panproject.MVC;
 
+import com.devadvance.circularseekbar.CircularSeekBar;
 import com.spitchenko.panproject.MyObserver.BurnerObserver;
 
 /**
@@ -8,5 +9,5 @@ import com.spitchenko.panproject.MyObserver.BurnerObserver;
  *
  * @author anatoliy
  */
-public interface BurnerView extends BurnerObserver {
+public interface BurnerView extends BurnerObserver, CircularSeekBar.OnCircularSeekBarChangeListener {
 }

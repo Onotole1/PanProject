@@ -1,6 +1,6 @@
 package com.spitchenko.panproject;
 
-import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devadvance.circularseekbar.CircularSeekBar;
+import com.spitchenko.panproject.MyObserver.PanObserver;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
 	private PanConcreteModel mPanConcreteModel;
 	private GasBurnerModel mGasBurnerModel;
 	private PanConcreteController mPanConcreteController;
-	private GasBurnerController mGasBurnerController;
-	private Context mContext = this;
+	private PanConcreteView mPanConcreteView;
+	private GasBurnerView mGasBurnerView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 		initGasBurner();
 
-		initPan(savedInstanceState);
+		initPan();
 
 		initCircleSeekBar(savedInstanceState);
 	}
@@ -96,11 +97,12 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
 				mPanConcreteModel = new PanConcreteModel();
-				mPanConcreteModel.registerObserver(new PanConcreteView(mContext));
+				mPanConcreteModel.registerObserver(mPanConcreteView);
 				mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
 				mGasBurnerModel.registerObserver(mPanConcreteController);
 				mPanConcreteModel.execute();
-				mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+				mGasBurnerView.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+				mCapButton.setEnabled(true);
 				return true;
 			}
 		};
@@ -111,27 +113,31 @@ public class MainActivity extends AppCompatActivity {
 	 */
 	private void initGasBurner() {
 		mGasBurnerModel = new GasBurnerModel();
-		mGasBurnerController = new GasBurnerController(mGasBurnerModel);
-		GasBurnerView gasBurnerView = new GasBurnerView();
-		mGasBurnerModel.registerObserver(gasBurnerView);
+		GasBurnerController gasBurnerController = new GasBurnerController(mGasBurnerModel);
+		mGasBurnerView = new GasBurnerView();
+		mGasBurnerView.setGasBurnerController(gasBurnerController);
+		mGasBurnerModel.registerObserver(mGasBurnerView);
 	}
 
 	/**
 	 * Инициализация кастрюли согласно паттерну MVC с загрузкой предыдущего состояния
 	 */
-	private void initPan(Bundle savedInstanceState) {
-		mPanConcreteController = new PanConcreteController(mPanButton, mCapButton, this);
-		if (savedInstanceState != null) {
-			if (savedInstanceState.getBoolean("mPanConcreteController")) {
-				mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
-				if (mPanConcreteModel != null) {
-					mPanConcreteModel.notifyObservers();
-					Log.d("mPanConcreteLast", mPanConcreteModel.toString());
-				}
-				mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
-				mGasBurnerModel.registerObserver(mPanConcreteController);
-				mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+	private void initPan() {
+		mPanConcreteController = new PanConcreteController(this);
+		mPanConcreteView = new PanConcreteView(mPanButton, mCapButton, this);
+		mPanConcreteView.setPanController(mPanConcreteController);
+		mPanConcreteModel = (PanConcreteModel) getLastCustomNonConfigurationInstance();
+		if (mPanConcreteModel != null && mPanConcreteModel.getStatus() != AsyncTask.Status.FINISHED) {
+			for (PanObserver panObserver:mPanConcreteModel.getObservers()) {
+				mPanConcreteModel.removeObserver(panObserver);
 			}
+			Log.d("mPanConcreteLast", mPanConcreteModel.toString());
+			mPanConcreteModel.registerObserver(mPanConcreteView);
+			mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
+			mGasBurnerModel.registerObserver(mPanConcreteController);
+			mGasBurnerView.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+			mPanConcreteModel.notifyObservers();
+			mCapButton.setEnabled(true);
 		}
 	}
 
@@ -140,11 +146,11 @@ public class MainActivity extends AppCompatActivity {
 	 */
 	private void initCircleSeekBar(Bundle savedInstanceState) {
 		try {
-			mProgressCircle.setOnSeekBarChangeListener(mGasBurnerController);
+			mProgressCircle.setOnSeekBarChangeListener(mGasBurnerView);
 			mProgressCircle.setProgress(savedInstanceState.getInt("mMySeekBarProgress"));
-			mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
+			mGasBurnerView.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
 		} catch (NullPointerException e) {
-			mProgressCircle.setOnSeekBarChangeListener(mGasBurnerController);
+			mProgressCircle.setOnSeekBarChangeListener(mGasBurnerView);
 		}
 	}
 
@@ -154,17 +160,21 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-		mPanConcreteModel.cancel(false);
-		mPanConcreteModel = null;
-	}
-
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		int mProgress = mProgressCircle.getProgress();
 		outState.putInt("mMySeekBarProgress", mProgress);
-		outState.putBoolean("mPanConcreteController", mPanConcreteController.isPan());
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		if (mPanConcreteModel != null) {
+			for (PanObserver panObserver:mPanConcreteModel.getObservers()) {
+				mPanConcreteModel.removeObserver(panObserver);
+			}
+			mPanConcreteModel.cancel(false);
+			mPanConcreteModel = null;
+		}
 	}
 }
