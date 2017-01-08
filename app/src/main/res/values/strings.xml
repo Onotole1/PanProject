@@ -4,16 +4,4 @@
 	<string name="pan_cap_button">Крышка</string>
 	<string name="burner_description">Это газовая горелка</string>
 	<string name="text_view_temperature">Поставьте кастрюлю на плиту</string>
-	<string name="http">HTTP</string>
-	<string name="stream">Stream</string>
-	<string name="sd">SD</string>
-	<string name="uri">Uri</string>
-	<string name="raw">Raw</string>
-	<string name="pause">Pause</string>
-	<string name="resume">Resume</string>
-	<string name="stop">Stop</string>
-	<string name="loop">Loop</string>
-	<string name="backward">Back</string>
-	<string name="forward">Forw</string>
-	<string name="info">Info</string>
 </resources>

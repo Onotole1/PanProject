@@ -1,7 +1,6 @@
 package com.spitchenko.panproject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 	private GasBurnerModel mGasBurnerModel;
 	private PanConcreteController mPanConcreteController;
 	private GasBurnerController mGasBurnerController;
-	private SharedPreferences mSharedPrefs;
 	private Context mContext = this;
 
 	@Override
@@ -97,21 +95,12 @@ public class MainActivity extends AppCompatActivity {
 		return new Handler.Callback() {
 			@Override
 			public boolean handleMessage(android.os.Message msg) {
-				mSharedPrefs = getPreferences(MODE_PRIVATE);
-				SharedPreferences.Editor mEditor = mSharedPrefs.edit();
-				if (msg.obj.equals("true")) {
-					mPanConcreteModel = new PanConcreteModel();
-					mPanConcreteModel.registerObserver(new PanConcreteView(mContext));
-					mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
-					mGasBurnerModel.registerObserver(mPanConcreteController);
-					mPanConcreteModel.execute();
-					mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
-					mEditor.putString("mPanControllerState", "true");
-					mEditor.apply();
-				} else {
-					mEditor.putString("mPanControllerState", "false");
-					mEditor.apply();
-				}
+				mPanConcreteModel = new PanConcreteModel();
+				mPanConcreteModel.registerObserver(new PanConcreteView(mContext));
+				mPanConcreteController.setPanConcreteModel(mPanConcreteModel);
+				mGasBurnerModel.registerObserver(mPanConcreteController);
+				mPanConcreteModel.execute();
+				mGasBurnerController.onProgressChanged(mProgressCircle, mProgressCircle.getProgress(), true);
 				return true;
 			}
 		};

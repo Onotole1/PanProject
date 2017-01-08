@@ -68,8 +68,6 @@ class PanConcreteController implements com.spitchenko.panproject.MVC.PanControll
 				mediaPlayer.start();
 				mCapButton.setEnabled(false);
 				mIsPan = false;
-				msg.obj = "false";
-				sHandler2.sendMessage(msg);
 			}
 		}
 	}
