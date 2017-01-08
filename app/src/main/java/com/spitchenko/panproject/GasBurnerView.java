@@ -2,6 +2,7 @@ package com.spitchenko.panproject;
 
 import android.os.Message;
 
+import com.devadvance.circularseekbar.CircularSeekBar;
 import com.spitchenko.panproject.MVC.BurnerView;
 
 
@@ -14,6 +15,7 @@ import static com.spitchenko.panproject.MainActivity.sHandler1;
  * @author anatoliy
  */
 class GasBurnerView implements BurnerView {
+    private GasBurnerController mGasBurnerController;
 
     @Override
     public void update(float temperatureView) {
@@ -32,5 +34,24 @@ class GasBurnerView implements BurnerView {
         Message msg = new Message();
         msg.arg1 = drawable;
         sHandler1.sendMessage(msg);
+    }
+
+    @Override
+    public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+        mGasBurnerController.setBurn(progress);
+    }
+
+    @Override
+    public void onStopTrackingTouch(CircularSeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(CircularSeekBar seekBar) {
+
+    }
+
+    void setGasBurnerController(GasBurnerController gasBurnerController) {
+        mGasBurnerController = gasBurnerController;
     }
 }

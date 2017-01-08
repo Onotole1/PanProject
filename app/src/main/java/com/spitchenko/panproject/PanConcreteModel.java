@@ -167,4 +167,8 @@ class PanConcreteModel extends AsyncTask<Void, Integer, Void> implements PanMode
             Log.d("Interrupt", description);
         }
     }
+
+	ArrayList<PanObserver> getObservers() {
+		return observers;
+	}
 }
